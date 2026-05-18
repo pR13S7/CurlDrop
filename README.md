@@ -1,6 +1,6 @@
 # File Share
 
-Temporary file sharing service. Upload via browser, download via `curl`/`wget`. Files expire in 24 hours.
+Temporary file sharing service. Upload via browser, download via `curl`/`wget`. Files auto-expire (configurable TTL).
 
 ![File Share UI](screenshot.png)
 
@@ -32,11 +32,16 @@ git clone https://github.com/YOUR_USER/curl_file_sharing.git /opt/fileshare
 cd /opt/fileshare
 ```
 
-Edit `docker-compose.yml` — set your domain:
+Create a `.env` file from the example:
 
-```yaml
-environment:
-  - BASE_URL=https://share.yourdomain.com
+```bash
+cp .env.example .env
+```
+
+Edit `.env` — set your public URL:
+
+```ini
+BASE_URL=https://share.yourdomain.com
 ```
 
 ### 5. Start the Service
@@ -98,7 +103,7 @@ wget --content-disposition https://share.yourdomain.com/d/x7Kp2mNq
 
 ## Configuration
 
-Environment variables in `docker-compose.yml`:
+Environment variables in `.env` (copy from `.env.example`):
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -106,6 +111,7 @@ Environment variables in `docker-compose.yml`:
 | `MAX_FILE_SIZE` | `209715200` | Max upload size in bytes (200 MB) |
 | `FILE_TTL_HOURS` | `24` | Hours before files are deleted |
 | `UPLOAD_DIR` | `/data/uploads` | Storage path inside container |
+| `MAX_STORAGE` | `1073741824` | Max total storage in bytes (1 GB) |
 
 ## Maintenance
 

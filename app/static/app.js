@@ -1,4 +1,11 @@
-const MAX_SIZE = 200 * 1024 * 1024;
+let MAX_SIZE = 200 * 1024 * 1024;
+
+fetch('/api/config').then(r => r.json()).then(cfg => {
+  MAX_SIZE = cfg.max_file_size;
+  document.getElementById('ttl-hours').textContent = cfg.ttl_hours;
+}).catch(() => {
+  document.getElementById('ttl-hours').textContent = '24';
+});
 
 const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
