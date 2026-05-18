@@ -125,10 +125,19 @@ Restart:
 docker compose restart
 ```
 
-Update:
+Update (auto-rebuild on pull):
+
+On the droplet, set up the git hook once:
+
+```bash
+cd /opt/fileshare
+git config core.hooksPath hooks
+```
+
+Now every `git pull` automatically rebuilds the container:
 
 ```bash
 cd /opt/fileshare
 git pull
-docker compose up --build -d
+# container rebuilds automatically
 ```

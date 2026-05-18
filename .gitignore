@@ -7,3 +7,7 @@ __pycache__/
 .codegraph
 .vscode
 .claude
+.wolf
+.wolf/hooks
+.wolf/anatomy.md
+.wolf/memory.md
