@@ -1,0 +1,16 @@
+services:
+  fileshare:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - upload_data:/data/uploads
+    environment:
+      - BASE_URL=http://localhost:8000
+      - MAX_FILE_SIZE=209715200
+      - FILE_TTL_HOURS=24
+      - UPLOAD_DIR=/data/uploads
+    restart: unless-stopped
+
+volumes:
+  upload_data:

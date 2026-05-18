@@ -1,0 +1,1 @@
+*/5 * * * * /usr/local/bin/python /app/scripts/cleanup.py >> /var/log/cleanup.log 2>&1
