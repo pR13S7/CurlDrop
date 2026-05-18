@@ -5,12 +5,7 @@ services:
       - "8000:8000"
     volumes:
       - upload_data:/data/uploads
-    environment:
-      - BASE_URL=http://localhost:8000
-      - MAX_FILE_SIZE=209715200
-      - FILE_TTL_HOURS=24
-      - UPLOAD_DIR=/data/uploads
-      - MAX_STORAGE=1073741824
+    env_file: .env
     restart: unless-stopped
 
 volumes:
