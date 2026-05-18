@@ -2,6 +2,8 @@
 
 Temporary file sharing service. Upload via browser, download via `curl`/`wget`. Files expire in 24 hours.
 
+![File Share UI](screenshot.png)
+
 ## Deploy on DigitalOcean Droplet
 
 ### 1. Create a Droplet
