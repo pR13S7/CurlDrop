@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -22,5 +24,8 @@ async def get_config():
     return {"ttl_hours": FILE_TTL_HOURS, "max_file_size": MAX_FILE_SIZE}
 
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
 app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
