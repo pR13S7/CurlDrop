@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo-text.png" alt="File Share" width="600">
+  <img src="assets/logo-text.svg" alt="CurlDrop" width="600" style="display:block;margin:0 auto;">
 </p>
 
 <p align="center">Temporary file sharing service. Upload via browser, download via <code>curl</code>/<code>wget</code>. Files auto-expire (configurable TTL).</p>
