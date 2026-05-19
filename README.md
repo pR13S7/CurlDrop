@@ -1,8 +1,10 @@
-# File Share
+<p align="center">
+  <img src="assets/logo-text.svg" alt="File Share" width="280">
+</p>
 
-Temporary file sharing service. Upload via browser, download via `curl`/`wget`. Files auto-expire (configurable TTL).
+<p align="center">Temporary file sharing service. Upload via browser, download via <code>curl</code>/<code>wget</code>. Files auto-expire (configurable TTL).</p>
 
-![File Share UI](screenshot.png)
+![File Share UI](assets/screenshot.png)
 
 ## Deploy on DigitalOcean Droplet
 
