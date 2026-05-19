@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo-text.svg" alt="File Share" width="280">
+  <img src="assets/logo-text.svg" alt="File Share" width="600">
 </p>
 
 <p align="center">Temporary file sharing service. Upload via browser, download via <code>curl</code>/<code>wget</code>. Files auto-expire (configurable TTL).</p>
