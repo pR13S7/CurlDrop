@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="assets/logo-text.svg" alt="CurlDrop" width="600" style="display:block;margin:0 auto;">
-</p>
+<img src="assets/logo-text.png" alt="CurlDrop" width="100%" style="display:block;width:100%;">
 
 <p align="center">Temporary file sharing service. Upload via browser, download via <code>curl</code>/<code>wget</code>. Files auto-expire (configurable TTL).</p>
 
