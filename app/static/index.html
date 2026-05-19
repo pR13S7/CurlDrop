@@ -5,100 +5,220 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CurlDrop</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
   <style>
-    .drop-active { border-color: #3b82f6 !important; background-color: rgba(59, 130, 246, 0.05); }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0a0a0f;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(56, 189, 248, 0.08), transparent);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow:
+        0 0 80px -20px rgba(99, 102, 241, 0.12),
+        0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    }
+
+    .drop-zone-border {
+      position: relative;
+      border-radius: 1rem;
+      padding: 3rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 2px dashed rgba(148, 163, 184, 0.25);
+      transition: all 0.3s ease;
+    }
+
+    .drop-zone-border:hover {
+      border-color: rgba(99, 102, 241, 0.5);
+      background: rgba(99, 102, 241, 0.03);
+      box-shadow: 0 0 30px -10px rgba(99, 102, 241, 0.2);
+    }
+
+    .drop-active {
+      border-color: rgba(99, 102, 241, 0.8) !important;
+      background: rgba(99, 102, 241, 0.06) !important;
+      box-shadow: 0 0 40px -10px rgba(99, 102, 241, 0.3) !important;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px -3px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px -5px rgba(99, 102, 241, 0.5);
+    }
+
+    .btn-primary:disabled {
+      background: rgba(100, 116, 139, 0.3);
+      box-shadow: none;
+    }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .input-field {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: border-color 0.2s ease;
+    }
+
+    .input-field:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+      outline: none;
+    }
+
+    .progress-bar-animated {
+      background: linear-gradient(90deg, #6366f1, #8b5cf6, #6366f1);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+      animation: fadeInUp 0.4s ease-out;
+    }
+
+    .logo-glow {
+      filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.15));
+    }
   </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-xl">
-    <img src="/assets/logo-text.png" alt="CurlDrop" class="w-full mb-6 rounded-xl">
-    <p class="text-gray-400 text-center mb-8">Upload a file, get a curl-friendly link. Files expire in <span id="ttl-hours">...</span> hours.</p>
-
-    <!-- Upload Section -->
-    <div id="upload-section">
-      <div id="drop-zone" class="border-2 border-dashed border-gray-600 rounded-xl p-12 text-center cursor-pointer hover:border-gray-400 transition-colors">
-        <svg class="mx-auto mb-4 w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-        </svg>
-        <p class="text-lg text-gray-300 mb-1">Drop file here or click to browse</p>
-        <p class="text-sm text-gray-500">Maximum file size: 200 MB</p>
-      </div>
-      <input type="file" id="file-input" class="hidden">
-
-      <!-- File Info (shown after selection) -->
-      <div id="file-info" class="hidden mt-4 bg-gray-800 rounded-lg p-4">
-        <div class="flex items-center justify-between mb-3">
-          <span id="file-name" class="text-sm text-gray-300 truncate mr-4"></span>
-          <span id="file-size" class="text-sm text-gray-500 whitespace-nowrap"></span>
-        </div>
-        <div id="progress-container" class="hidden">
-          <div class="w-full bg-gray-700 rounded-full h-2 mb-2">
-            <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-          </div>
-          <p id="progress-text" class="text-xs text-gray-500 text-right">0%</p>
-        </div>
-        <button id="upload-btn" class="w-full mt-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed py-2.5 rounded-lg font-semibold transition-colors">
-          Upload
-        </button>
-      </div>
-
-      <div id="error-msg" class="hidden mt-4 bg-red-900/50 border border-red-700 rounded-lg p-3 text-red-300 text-sm"></div>
+<body class="text-white min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-lg">
+    <!-- Logo -->
+    <div class="flex justify-center mb-8">
+      <img src="/assets/logo-text.png" alt="CurlDrop" class="max-w-[280px] w-auto h-auto logo-glow">
     </div>
 
-    <!-- Success Section -->
-    <div id="success-section" class="hidden">
-      <div class="bg-gray-800 rounded-xl p-6">
-        <div class="flex items-center mb-4">
-          <svg class="w-6 h-6 text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    <!-- Main Card -->
+    <div class="glass-card rounded-2xl p-8">
+      <p class="text-slate-400 text-center text-sm mb-6">Upload a file, get a curl-friendly link. Files expire in <span id="ttl-hours" class="text-indigo-300 font-medium">...</span> hours.</p>
+
+      <!-- Upload Section -->
+      <div id="upload-section">
+        <div id="drop-zone" class="drop-zone-border text-center cursor-pointer">
+          <svg class="mx-auto mb-4 w-10 h-10 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
           </svg>
-          <h2 class="text-xl font-semibold">File uploaded</h2>
+          <p class="text-sm text-slate-300 mb-1 font-medium">Drop file here or click to browse</p>
+          <p class="text-xs text-slate-500">Maximum file size: 200 MB</p>
+        </div>
+        <input type="file" id="file-input" class="hidden">
+
+        <!-- File Info -->
+        <div id="file-info" class="hidden mt-4 bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 animate-in">
+          <div class="flex items-center justify-between mb-3">
+            <span id="file-name" class="text-sm text-slate-300 truncate mr-4 font-medium"></span>
+            <span id="file-size" class="text-xs text-slate-500 whitespace-nowrap"></span>
+          </div>
+          <div id="progress-container" class="hidden">
+            <div class="w-full bg-white/[0.05] rounded-full h-1.5 mb-2">
+              <div id="progress-bar" class="progress-bar-animated h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <p id="progress-text" class="text-xs text-slate-500 text-right">0%</p>
+          </div>
+          <button id="upload-btn" class="w-full mt-3 btn-primary disabled:cursor-not-allowed py-2.5 rounded-xl font-semibold text-sm transition-colors">
+            Upload
+          </button>
         </div>
 
-        <div class="space-y-3 mb-6">
+        <div id="error-msg" class="hidden mt-4 bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-red-300 text-sm"></div>
+      </div>
+
+      <!-- Success Section -->
+      <div id="success-section" class="hidden animate-in">
+        <div class="flex items-center mb-5">
+          <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center mr-3">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <h2 class="text-lg font-semibold">File uploaded</h2>
+        </div>
+
+        <div class="space-y-2.5 mb-6 bg-white/[0.02] rounded-xl p-4 border border-white/[0.04]">
           <div class="flex justify-between text-sm">
-            <span class="text-gray-400">File</span>
-            <span id="result-filename" class="text-gray-200"></span>
+            <span class="text-slate-500">File</span>
+            <span id="result-filename" class="text-slate-200 font-medium"></span>
           </div>
           <div class="flex justify-between text-sm">
-            <span class="text-gray-400">Size</span>
-            <span id="result-size" class="text-gray-200"></span>
+            <span class="text-slate-500">Size</span>
+            <span id="result-size" class="text-slate-200"></span>
           </div>
           <div class="flex justify-between text-sm">
-            <span class="text-gray-400">Expires</span>
-            <span id="result-expires" class="text-gray-200"></span>
+            <span class="text-slate-500">Expires</span>
+            <span id="result-expires" class="text-slate-200"></span>
           </div>
         </div>
 
         <div class="space-y-3">
           <div>
-            <label class="text-xs text-gray-500 uppercase tracking-wide">Download URL</label>
-            <div class="flex mt-1">
-              <input id="result-url" readonly class="flex-1 bg-gray-900 border border-gray-700 rounded-l-lg px-3 py-2 text-sm font-mono text-gray-300">
-              <button onclick="copyText('result-url')" class="bg-gray-700 hover:bg-gray-600 px-4 rounded-r-lg text-sm transition-colors">Copy</button>
+            <label class="text-[11px] text-slate-500 uppercase tracking-wider font-medium">Download URL</label>
+            <div class="flex mt-1.5">
+              <input id="result-url" readonly class="input-field flex-1 rounded-l-lg px-3 py-2 text-xs font-mono text-slate-300">
+              <button onclick="copyText('result-url')" class="copy-btn px-4 rounded-r-lg text-xs font-medium">Copy</button>
             </div>
           </div>
           <div>
-            <label class="text-xs text-gray-500 uppercase tracking-wide">curl</label>
-            <div class="flex mt-1">
-              <input id="result-curl" readonly class="flex-1 bg-gray-900 border border-gray-700 rounded-l-lg px-3 py-2 text-sm font-mono text-gray-300">
-              <button onclick="copyText('result-curl')" class="bg-gray-700 hover:bg-gray-600 px-4 rounded-r-lg text-sm transition-colors">Copy</button>
+            <label class="text-[11px] text-slate-500 uppercase tracking-wider font-medium">curl</label>
+            <div class="flex mt-1.5">
+              <input id="result-curl" readonly class="input-field flex-1 rounded-l-lg px-3 py-2 text-xs font-mono text-slate-300">
+              <button onclick="copyText('result-curl')" class="copy-btn px-4 rounded-r-lg text-xs font-medium">Copy</button>
             </div>
           </div>
           <div>
-            <label class="text-xs text-gray-500 uppercase tracking-wide">wget</label>
-            <div class="flex mt-1">
-              <input id="result-wget" readonly class="flex-1 bg-gray-900 border border-gray-700 rounded-l-lg px-3 py-2 text-sm font-mono text-gray-300">
-              <button onclick="copyText('result-wget')" class="bg-gray-700 hover:bg-gray-600 px-4 rounded-r-lg text-sm transition-colors">Copy</button>
+            <label class="text-[11px] text-slate-500 uppercase tracking-wider font-medium">wget</label>
+            <div class="flex mt-1.5">
+              <input id="result-wget" readonly class="input-field flex-1 rounded-l-lg px-3 py-2 text-xs font-mono text-slate-300">
+              <button onclick="copyText('result-wget')" class="copy-btn px-4 rounded-r-lg text-xs font-medium">Copy</button>
             </div>
           </div>
         </div>
 
-        <button id="reset-btn" class="w-full mt-6 border border-gray-600 hover:border-gray-400 py-2.5 rounded-lg text-sm transition-colors">
+        <button id="reset-btn" class="w-full mt-6 border border-white/[0.1] hover:border-white/[0.2] hover:bg-white/[0.03] py-2.5 rounded-xl text-sm font-medium transition-all">
           Upload another file
         </button>
       </div>
     </div>
+
+    <p class="text-center text-[11px] text-slate-600 mt-6">Ephemeral file sharing via curl, wget, or browser</p>
   </div>
   <script src="/app.js"></script>
 </body>
